@@ -95,6 +95,7 @@ class TestSkipgramModel(unittest.TestCase):
                 neg, word_ngrams, loss, bucket, minn, maxn, thread, lr_update_rate,
                 t, silent)
 
+
         # Make sure the model is generated correctly
         self.assertEqual(model.dim, dim)
         self.assertEqual(model.ws, ws)

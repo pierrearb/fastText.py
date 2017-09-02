@@ -21,6 +21,7 @@ class WordVectorModel(object):
         self.lr_update_rate = model.lrUpdateRate
         self.t = model.t
         self.encoding = encoding
+        self.save_softmax = model.saveSoftmax
 
     def __getitem__(self, word):
         return self._model.get_vector(word, self.encoding)
@@ -55,7 +56,7 @@ class SupervisedModel(object):
         self.t = model.t
         self.label_prefix = label_prefix
         self.encoding = encoding
-        self.saveSoftmax = model.saveSoftmax
+        self.save_softmax = model.saveSoftmax
 
     def test(self, test_file, k=1):
         return self._model.classifier_test(test_file, k, self.encoding)

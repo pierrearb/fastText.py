@@ -179,7 +179,7 @@ def load_model(filename, label_prefix='', encoding='utf-8'):
 # Wrapper for train(int argc, char *argv) C++ function in cpp/src/fasttext.cc
 def train_wrapper(model_name, input_file, output, label_prefix, lr, dim, ws,
         epoch, min_count, neg, word_ngrams, loss, bucket, minn, maxn, thread,
-        lr_update_rate, t, pretrained_vectors, silent=1, encoding='utf-8', save_softmax=1):
+        lr_update_rate, t, pretrained_vectors, silent=1, encoding='utf-8', save_softmax=0):
 
     # Check if the input_file is valid
     if not os.path.isfile(input_file):
@@ -235,28 +235,28 @@ def train_wrapper(model_name, input_file, output, label_prefix, lr, dim, ws,
 # Learn word representation using skipgram model
 def skipgram(input_file, output, lr=0.05, dim=100, ws=5, epoch=5, min_count=5,
         neg=5, word_ngrams=1, loss='ns', bucket=2000000, minn=3, maxn=6,
-        thread=12, lr_update_rate=100, t=1e-4, silent=1, encoding='utf-8'):
+        thread=12, lr_update_rate=100, t=1e-4, silent=1, encoding='utf-8', save_softmax=0):
     label_prefix = ''
     pretrained_vectors = ''
     return train_wrapper('skipgram', input_file, output, label_prefix, lr,
             dim, ws, epoch, min_count, neg, word_ngrams, loss, bucket, minn,
-            maxn, thread, lr_update_rate, t, pretrained_vectors, silent, encoding='utf-8')
+            maxn, thread, lr_update_rate, t, pretrained_vectors, silent, encoding='utf-8', save_softmax=0)
 
 # Learn word representation using CBOW model
 def cbow(input_file, output, lr=0.05, dim=100, ws=5, epoch=5, min_count=5,
         neg=5, word_ngrams=1, loss='ns', bucket=2000000, minn=3, maxn=6,
-        thread=12, lr_update_rate=100, t=1e-4, silent=1, encoding='utf-8', saveSoftmax=1):
+        thread=12, lr_update_rate=100, t=1e-4, silent=1, encoding='utf-8', save_softmax=0):
     label_prefix = ''
     pretrained_vectors = ''
     return train_wrapper('cbow', input_file, output, label_prefix, lr, dim,
             ws, epoch, min_count, neg, word_ngrams, loss, bucket, minn, maxn,
-            thread, lr_update_rate, t, pretrained_vectors, silent, encoding, saveSoftmax)
+            thread, lr_update_rate, t, pretrained_vectors, silent, encoding, save_softmax)
 
 # Train classifier
 def supervised(input_file, output, label_prefix='__label__', lr=0.1, dim=100,
         ws=5, epoch=5, min_count=1, neg=5, word_ngrams=1, loss='softmax',
         bucket=0, minn=0, maxn=0, thread=12, lr_update_rate=100,
-        t=1e-4, pretrained_vectors='', silent=1, encoding='utf-8', saveSoftmax=1):
+        t=1e-4, pretrained_vectors='', silent=1, encoding='utf-8', save_softmax=0):
     return train_wrapper('supervised', input_file, output, label_prefix, lr,
             dim, ws, epoch, min_count, neg, word_ngrams, loss, bucket, minn,
-            maxn, thread, lr_update_rate, t, pretrained_vectors, silent, encoding, saveSoftmax)
+            maxn, thread, lr_update_rate, t, pretrained_vectors, silent, encoding, save_softmax)

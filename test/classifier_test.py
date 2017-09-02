@@ -167,11 +167,13 @@ class TestClassifierModel(unittest.TestCase):
         thread=4
         silent=1
         label_prefix='__label__'
+        save_softmax=1
 
         # Train the classifier
         model = ft.supervised(input_file, output, dim=dim, lr=lr, epoch=epoch,
                 min_count=min_count, word_ngrams=word_ngrams, bucket=bucket,
-                thread=thread, silent=silent, label_prefix=label_prefix)
+                thread=thread, silent=silent, label_prefix=label_prefix,
+                save_softmax=save_softmax)
 
         # Make sure the model is generated correctly
         self.assertEqual(model.dim, dim)
@@ -188,6 +190,9 @@ class TestClassifierModel(unittest.TestCase):
 
         # Make sure .bin and .vec are generated
         self.assertTrue(path.isfile(output + '.bin'))
+
+        # Make sure .softmax is generated
+        self.assertTrue(path.isfile(output + '.softmax'))
 
         # Test some methods, make sure it works
         labels = model.predict(['some long long texts'])

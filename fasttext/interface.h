@@ -48,7 +48,6 @@ class FastTextModel {
 
         void addWord(std::string word);
         void setArgs(std::shared_ptr<Args> args);
-        int getSM();
         void setDictionary(std::shared_ptr<Dictionary> dict);
         void setMatrix(std::shared_ptr<Matrix> input,
                 std::shared_ptr<Matrix> output);
