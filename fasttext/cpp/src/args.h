@@ -44,6 +44,7 @@ class Args {
     std::string label;
     int verbose;
     std::string pretrainedVectors;
+    int saveSoftmax;
 
     void parseArgs(int, char**);
     void printHelp();

@@ -55,6 +55,7 @@ class SupervisedModel(object):
         self.t = model.t
         self.label_prefix = label_prefix
         self.encoding = encoding
+        self.saveSoftmax = model.saveSoftmax
 
     def test(self, test_file, k=1):
         return self._model.classifier_test(test_file, k, self.encoding)

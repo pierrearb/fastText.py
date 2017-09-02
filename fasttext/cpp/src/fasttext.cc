@@ -87,6 +87,23 @@ void FastText::loadModel(std::istream& in) {
   }
 }
 
+void FastText::saveSoftmaxWeights() {
+  std::ofstream ofs(args_->output + ".softmax");
+  if (!ofs.is_open()) {
+    std::cerr << "Error opening file for saving softmax weights." << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  ofs << dict_->nlabels() << " " << args_->dim << std::endl;
+  Vector vec(args_->dim);
+  for (int32_t i = 0; i < dict_->nlabels(); i++) {
+    std::string label = dict_->getLabel(i);
+    vec.zero();
+    vec.addRow(*output_, i);
+    ofs << label << " " << vec << std::endl;
+  }
+  ofs.close();
+}
+
 void FastText::printInfo(real progress, real loss) {
   real t = real(clock() - start) / CLOCKS_PER_SEC;
   real wst = real(tokenCount) / t;
@@ -366,6 +383,9 @@ void FastText::train(std::shared_ptr<Args> args) {
   if (args_->model != model_name::sup) {
     saveVectors();
   }
-}
 
+  if (args_->saveSoftmax > 0 and args_->model == model_name::sup) {
+    saveSoftmaxWeights();
+    }
+  }
 }

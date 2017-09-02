@@ -37,6 +37,7 @@ cdef extern from "interface.h":
         int maxn
         int lrUpdateRate
         double t
+        int saveSoftmax
 
         vector[string] getWords()
         vector[real] getVectorWrapper(string word)

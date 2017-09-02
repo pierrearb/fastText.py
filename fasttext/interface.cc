@@ -61,6 +61,7 @@ void FastTextModel::setArgs(std::shared_ptr<Args> args)
     lrUpdateRate = args->lrUpdateRate;
     t = args->t;
     lr = args->lr;
+    saveSoftmax = args->saveSoftmax;
 }
 
 void FastTextModel::setDictionary(std::shared_ptr<Dictionary> dict)

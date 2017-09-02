@@ -37,6 +37,7 @@ class FastTextModel {
         double lr;
         int lrUpdateRate;
         double t;
+        int saveSoftmax;
 
         std::vector<std::string> getWords();
         std::vector<real> getVectorWrapper(std::string word);
@@ -47,6 +48,7 @@ class FastTextModel {
 
         void addWord(std::string word);
         void setArgs(std::shared_ptr<Args> args);
+        int getSM();
         void setDictionary(std::shared_ptr<Dictionary> dict);
         void setMatrix(std::shared_ptr<Matrix> input,
                 std::shared_ptr<Matrix> output);
