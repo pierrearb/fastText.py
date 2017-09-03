@@ -156,6 +156,7 @@ class TestClassifierModel(unittest.TestCase):
         self.assertEqual(model.t, float(default_args['t']))
         self.assertEqual(model.label_prefix, default_args['label'])
 
+
     def test_train_classifier(self):
         # set params
         dim=10
@@ -172,8 +173,8 @@ class TestClassifierModel(unittest.TestCase):
         # Train the classifier
         model = ft.supervised(input_file, output, dim=dim, lr=lr, epoch=epoch,
                 min_count=min_count, word_ngrams=word_ngrams, bucket=bucket,
-                thread=thread, silent=silent, label_prefix=label_prefix,
-                save_softmax=save_softmax)
+                thread=thread, save_softmax=save_softmax, silent=silent,
+                label_prefix=label_prefix)
 
         # Make sure the model is generated correctly
         self.assertEqual(model.dim, dim)
@@ -181,6 +182,7 @@ class TestClassifierModel(unittest.TestCase):
         self.assertEqual(model.min_count, min_count)
         self.assertEqual(model.word_ngrams, word_ngrams)
         self.assertEqual(model.bucket, bucket)
+        self.assertEqual(model.save_softmax, save_softmax)
 
         # Read labels from the the input_file
         labels = read_labels_from_input(input_file, label_prefix)

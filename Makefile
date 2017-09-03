@@ -84,7 +84,7 @@ test/dbpedia.train: test/download_dbpedia.sh
 test/classifier.bin: test/dbpedia.train
 	./fasttext/cpp/fasttext supervised -input test/dbpedia.train \
 		-output test/classifier -dim 100 -lr 0.1 -wordNgrams 2 \
-		-minCount 1 -bucket 2000000 -epoch 5 -thread 4 >> /dev/null
+		-minCount 1 -bucket 2000000 -epoch 5 -thread 4 -saveSoftmax 1 >> /dev/null
 
 test/classifier_test_result.txt: test/classifier.bin
 	./fasttext/cpp/fasttext test test/classifier.bin \
