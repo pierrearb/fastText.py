@@ -233,10 +233,10 @@ void FastText::predictWeights(std::istream& in,
   Vector output(dict_->nlabels());
   std::vector<std::pair<real,int32_t>> modelWeightsPredictions;
   model_->predictWeights(words, modelWeightsPredictions, hidden, output);
-  modelWeightsPredictions.clear();
   for (auto it = modelWeightsPredictions.cbegin(); it != modelWeightsPredictions.cend(); it++) {
     weights.push_back(std::make_pair(it->first, dict_->getLabel(it->second)));
   }
+  modelWeightsPredictions.clear();
 }
 
 void FastText::predictWeights(std::istream& in) {
@@ -251,7 +251,7 @@ void FastText::predictWeights(std::istream& in) {
       if (it != weights.cbegin()) {
         std::cout << " ";
       }
-      std::cout << it->second;
+      std::cout << it->second << " " << it->first;
     }
     std::cout << std::endl;
   }

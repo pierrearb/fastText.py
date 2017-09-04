@@ -12,7 +12,6 @@
 #include <assert.h>
 
 #include <algorithm>
-#include <iostream>
 
 #include "utils.h"
 
@@ -144,14 +143,6 @@ void Model::predict(const std::vector<int32_t>& input, int32_t k,
 
 void Model::computeClassWeights(Vector& hidden, Vector& output) const {
   output.mul(*wo_, hidden);
-  // std::cerr << "output size: " << output.size() << std::endl;
-  // for (int i = 3; i < output.size(); i++) {
-  //   try {
-  //     std::cerr << i << " " << output[i];
-  //   } catch (const std::exception& e) {
-  //    std::cout << e.what();
-  //   }
-  // }
 }
 
 void Model::predictWeights(const std::vector<int32_t>& input,
@@ -160,11 +151,6 @@ void Model::predictWeights(const std::vector<int32_t>& input,
   heapweights.reserve(osz_);
   computeHidden(input, hidden);
   computeClassWeights(hidden, output);
-  std::cerr << "output size: " << output.size() << std::endl;
-  for (int k = 0; k<output.size(); k=k+1) {
-    std::cerr << k << " " << output[k];
-  }
-  std::cerr << " " << std::endl;
   for (int32_t i = 0; i < osz_; i++) {
     heapweights.push_back(std::make_pair(output[i], i));
     std::push_heap(heapweights.begin(), heapweights.end(), comparePairs);
