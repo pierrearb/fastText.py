@@ -176,7 +176,7 @@ def load_model(filename, save_softmax=0, label_prefix='', encoding='utf-8'):
     else:
         raise ValueError('fastText: model name is not valid!')
 
-# Wrapper for train(int argc, char *argv) C++ function in cpp/src/fasttext.cc
+# Wrapper for train C++ function in cpp/src/fasttext.cc
 def train_wrapper(model_name, input_file, output, label_prefix, lr, dim, ws,
         epoch, min_count, neg, word_ngrams, loss, bucket, minn, maxn, thread,
         lr_update_rate, t, save_softmax, pretrained_vectors, silent=1, encoding='utf-8'):
@@ -215,12 +215,16 @@ def train_wrapper(model_name, input_file, output, label_prefix, lr, dim, ws,
 
     # Converting Python object to C++
     cdef int c_argc = argc
-    cdef char **c_argv = <char **>malloc(c_argc * sizeof(char *))
-    for i, arg in enumerate(py_argv):
-        c_argv[i] = arg
+#    cdef char **c_argv = <char **>malloc(c_argc * sizeof(char *))
+#    for i, arg in enumerate(py_argv):
+#        c_argv[i] = arg
+
+    cdef vector[string] c_args
+    for arg in py_argv:
+        c_args.push_back(arg)
 
     # Run the train wrapper
-    trainWrapper(c_argc, c_argv, silent)
+    trainWrapper(c_args, silent)
 
     # Load the model
     output_bin = output + '.bin'
@@ -228,7 +232,8 @@ def train_wrapper(model_name, input_file, output, label_prefix, lr, dim, ws,
 
     # Free the allocated memory
     # The content from PyString_AsString is not deallocated
-    free(c_argv)
+#    free(c_argv)
+    # free(c_args)
 
     return model
 

@@ -7,8 +7,15 @@ using namespace fasttext;
 
 int main(int argc, char **argv)
 {
+    std::cerr << "Argc:  " << argc << std::endl;
+    for(int i=0;i<argc-1;i++)
+    {
+        std::cerr << "Argv:  " << argv[i] << std::endl;
+        printf("%s",argv[i]);
+    }
     Args args;
-    args.parseArgs(argc, argv);
+    std::vector<std::string> args_(argv, argv + argc);
+    args.parseArgs(args_);
     std::cout << "lr " << args.lr << std::endl;
     std::cout << "dim " << args.dim << std::endl;
     std::cout << "ws " << args.ws << std::endl;

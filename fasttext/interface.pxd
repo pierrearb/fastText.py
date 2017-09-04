@@ -51,7 +51,8 @@ cdef extern from "interface.h":
         int32_t dictGetNLabels()
         string dictGetLabel(int32_t i)
 
-    void trainWrapper(int argc, char **argvm, int silent)
+#    void trainWrapper(int argc, char **argvm, int silent)
+    void trainWrapper(vector[string] args, int silent)
 
     # Add 'except +' to the function declaration to let Cython safely raise an
     # appropriate Python exception instead

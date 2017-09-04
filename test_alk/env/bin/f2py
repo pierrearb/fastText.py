@@ -1,0 +1,4 @@
+#!/Users/pierre/Alkemics/repositories/dev/fastText.py/test_alk/env/bin/python
+# EASY-INSTALL-SCRIPT: 'numpy==1.13.1','f2py'
+__requires__ = 'numpy==1.13.1'
+__import__('pkg_resources').run_script('numpy==1.13.1', 'f2py')
