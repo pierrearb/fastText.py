@@ -215,16 +215,12 @@ def train_wrapper(model_name, input_file, output, label_prefix, lr, dim, ws,
 
     # Converting Python object to C++
     cdef int c_argc = argc
-#    cdef char **c_argv = <char **>malloc(c_argc * sizeof(char *))
-#    for i, arg in enumerate(py_argv):
-#        c_argv[i] = arg
-
-    cdef vector[string] c_args
-    for arg in py_argv:
-        c_args.push_back(arg)
+    cdef char **c_argv = <char **>malloc(c_argc * sizeof(char *))
+    for i, arg in enumerate(py_argv):
+        c_argv[i] = arg
 
     # Run the train wrapper
-    trainWrapper(c_args, silent)
+    trainWrapper(c_argc, c_argv, silent)
 
     # Load the model
     output_bin = output + '.bin'
@@ -232,8 +228,7 @@ def train_wrapper(model_name, input_file, output, label_prefix, lr, dim, ws,
 
     # Free the allocated memory
     # The content from PyString_AsString is not deallocated
-#    free(c_argv)
-    # free(c_args)
+    free(c_argv)
 
     return model
 

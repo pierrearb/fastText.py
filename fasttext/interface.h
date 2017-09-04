@@ -60,7 +60,7 @@ class FastTextModel {
         std::string dictGetLabel(int32_t i);
 };
 
-void trainWrapper(const std::vector<std::string> args, int silent);
+void trainWrapper(int argc, char **argv, int silent);
 void loadModelWrapper(std::string filename, FastTextModel& model);
 
 #endif

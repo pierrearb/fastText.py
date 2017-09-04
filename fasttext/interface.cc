@@ -109,7 +109,7 @@ std::string FastTextModel::dictGetLabel(int32_t i)
 std::vector<real> FastTextModel::getVectorWrapper(std::string word)
 {
     Vector vec(dim);
-    const std::vector<int32_t>& ngrams = _dict->getSubwords(word);
+    const std::vector<int32_t>& ngrams = _dict->getNgrams(word);
     vec.zero();
     for (auto it = ngrams.begin(); it != ngrams.end(); ++it) {
         vec.addRow(*_input_matrix, *it);
@@ -137,6 +137,7 @@ std::vector<double> FastTextModel::classifierTest(std::string filename,
 
     while (ifs.peek() != EOF) {
         _dict->getLine(ifs, line, labels, _model->rng);
+        _dict->addNgrams(line, wordNgrams);
         if(labels.size() > 0 && line.size() > 0) {
             std::vector<std::pair<real, int32_t>> predictions;
             _model->predict(line, k, predictions);
@@ -186,6 +187,7 @@ std::vector<std::string> FastTextModel::classifierPredict(std::string text,
         }
         if(text_word_ids.size() > max_line_size) break;
     }
+    _dict->addNgrams(text_word_ids, wordNgrams);
 
     std::vector<std::string> labels;
     if(text_word_ids.size() > 0) {
@@ -226,6 +228,7 @@ std::vector<std::vector<std::string>>
         }
         if(text_word_ids.size() > max_line_size) break;
     }
+    _dict->addNgrams(text_word_ids, wordNgrams);
 
     std::vector<std::vector<std::string>> results;
     if(text_word_ids.size() > 0) {
@@ -256,7 +259,7 @@ class basic_nullbuf: public std::basic_streambuf<cT, traits> {
     }
 };
 
-void trainWrapper(const std::vector<std::string> args, int silent)
+void trainWrapper(int argc, char **argv, int silent)
 {
     /* if silent > 0, the log from train() function will be supressed */
     if(silent > 0) {
@@ -265,14 +268,14 @@ void trainWrapper(const std::vector<std::string> args, int silent)
         std::streambuf* null_ofs = new basic_nullbuf<char>();
         std::cout.rdbuf(null_ofs);
         std::shared_ptr<Args> a = std::make_shared<Args>();
-        a->parseArgs(args);
+        a->parseArgs(argc, argv);
         FastText fasttext;
         fasttext.train(a);
         std::cout.rdbuf(old_ofs);
         delete null_ofs;
     } else {
         std::shared_ptr<Args> a = std::make_shared<Args>();
-        a->parseArgs(args);
+        a->parseArgs(argc, argv);
         FastText fasttext;
         fasttext.train(a);
     }

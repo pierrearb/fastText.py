@@ -40,3 +40,5 @@ make
 ./fasttext test "${RESULTDIR}/dbpedia.bin" "${DATADIR}/dbpedia.test"
 
 ./fasttext predict "${RESULTDIR}/dbpedia.bin" "${DATADIR}/dbpedia.test" > "${RESULTDIR}/dbpedia.test.predict"
+
+./fasttext predict-weights "${RESULTDIR}/dbpedia.bin" "${DATADIR}/dbpedia.test" > "${RESULTDIR}/dbpedia.test.predictWeights"

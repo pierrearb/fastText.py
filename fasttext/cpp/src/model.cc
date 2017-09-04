@@ -12,6 +12,7 @@
 #include <assert.h>
 
 #include <algorithm>
+#include <iostream>
 
 #include "utils.h"
 
@@ -77,29 +78,6 @@ real Model::hierarchicalSoftmax(int32_t target, real lr) {
   return loss;
 }
 
-void Model::computeClassWeights(Vector& hidden, Vector& output, std::vector<std::pair<real, int32_t>>& weights) const {
-  output.mul(*wo_, hidden);
-  for (int32_t i = 0; i < m_; i++) {
-    weights.push_back(std::make_pair(output[i], i));
-  }
-  return weights;
-}
-
-void Model::predictWeights(const std::vector<int32_t>& input,
-                           std::vector<std::pair<real, int32_t>>& weights,
-                           Vector& hidden, Vector& output) const {
-  weights.reserve(m_ + 1);
-  computeHidden(input, hidden);
-  computeClassWeights(hidden, output, weights);
-  }
-  std::sort_heap(weights.begin(), weights.end(), comparePairs);
-}
-
-void Model::predictWeights(const std::vector<int32_t>& input, int32_t k,
-                           std::vector<std::pair<real, int32_t>>& weights) {
-  predictWeights(input, weights, hidden_, output_);
-}
-
 void Model::computeOutputSoftmax(Vector& hidden, Vector& output) const {
   output.mul(*wo_, hidden);
   real max = output[0], z = 0.0;
@@ -163,6 +141,42 @@ void Model::predict(const std::vector<int32_t>& input, int32_t k,
                     std::vector<std::pair<real, int32_t>>& heap) {
   predict(input, k, heap, hidden_, output_);
 }
+
+void Model::computeClassWeights(Vector& hidden, Vector& output) const {
+  output.mul(*wo_, hidden);
+  // std::cerr << "output size: " << output.size() << std::endl;
+  // for (int i = 3; i < output.size(); i++) {
+  //   try {
+  //     std::cerr << i << " " << output[i];
+  //   } catch (const std::exception& e) {
+  //    std::cout << e.what();
+  //   }
+  // }
+}
+
+void Model::predictWeights(const std::vector<int32_t>& input,
+                           std::vector<std::pair<real, int32_t>>& heapweights,
+                           Vector& hidden, Vector& output) const {
+  heapweights.reserve(osz_);
+  computeHidden(input, hidden);
+  computeClassWeights(hidden, output);
+  std::cerr << "output size: " << output.size() << std::endl;
+  for (int k = 0; k<output.size(); k=k+1) {
+    std::cerr << k << " " << output[k];
+  }
+  std::cerr << " " << std::endl;
+  for (int32_t i = 0; i < osz_; i++) {
+    heapweights.push_back(std::make_pair(output[i], i));
+    std::push_heap(heapweights.begin(), heapweights.end(), comparePairs);
+  }
+  std::sort_heap(heapweights.begin(), heapweights.end(), comparePairs);
+}
+
+void Model::predictWeights(const std::vector<int32_t>& input,
+                           std::vector<std::pair<real, int32_t>>& heapweights) {
+  predictWeights(input, heapweights, hidden_, output_);
+}
+
 
 void Model::findKBest(int32_t k, std::vector<std::pair<real, int32_t>>& heap,
                       Vector& hidden, Vector& output) const {
