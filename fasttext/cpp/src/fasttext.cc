@@ -373,6 +373,39 @@ void FastText::predict(std::istream& in, int32_t k, bool print_prob) {
   }
 }
 
+void FastText::predictWeights(std::istream& in,
+                              std::vector<std::pair<real,std::string>>& weights) const {
+  std::vector<int32_t> words, labels;
+  predictions.clear();
+  dict_->getLine(in, words, labels, model_->rng);
+  if (words.empty()) return;
+  Vector hidden(args_->dim);
+  Vector output(dict_->nlabels());
+  std::vector<std::pair<real,int32_t>> modelWeightsPredictions;
+  model_->predictWeights(words, modelWeightsPredictions, hidden, output);
+  for (auto it = modelWeightsPredictions.cbegin(); it != modelPredictions.cend(); it++) {
+    weights.push_back(std::make_pair(it->first, dict_->getLabel(it->second)));
+  }
+}
+
+void FastText::predictWeights(std::istream& in) {
+  std::vector<std::pair<real,std::string>> weights;
+  while (in.peek() != EOF) {
+    predictWeights(in, weights);
+    if (weights.empty()) {
+      std::cout << std::endl;
+      continue;
+    }
+    for (auto it = weights.cbegin(); it != weights.cend(); it++) {
+      if (it != weights.cbegin()) {
+        std::cout << " ";
+      }
+      std::cout << it->second;
+    }
+    std::cout << std::endl;
+  }
+}
+
 void FastText::wordVectors() {
   std::string word;
   Vector vec(args_->dim);

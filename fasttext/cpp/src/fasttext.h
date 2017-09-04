@@ -74,6 +74,10 @@ class FastText {
         std::istream&,
         int32_t,
         std::vector<std::pair<real, std::string>>&) const;
+    void predictWeights(std::istream&, bool);
+    void predictWeights(
+        std::istream&,
+        std::vector<std::pair<real, std::string>>&) const;
     void wordVectors();
     void sentenceVectors();
     void ngramVectors(std::string);

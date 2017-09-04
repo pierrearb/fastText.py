@@ -83,6 +83,11 @@ class Model {
                  Vector&, Vector&) const;
     void predict(const std::vector<int32_t>&, int32_t,
                  std::vector<std::pair<real, int32_t>>&);
+    void predictWeights(const std::vector<int32_t>&,
+                        std::vector<std::pair<real, int32_t>>&,
+                        Vector&, Vector&) const;
+    void predictWeights(const std::vector<int32_t>&,
+                        std::vector<std::pair<real, int32_t>>&);
     void dfs(int32_t, int32_t, real,
              std::vector<std::pair<real, int32_t>>&,
              Vector&) const;
