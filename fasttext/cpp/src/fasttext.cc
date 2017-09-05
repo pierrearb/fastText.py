@@ -223,7 +223,7 @@ void FastText::predict(std::istream& in, int32_t k, bool print_prob) {
   }
 }
 
-void FastText::predictWeights(std::istream& in,
+void FastText::predictWeights(std::istream& in, int32_t k,
                               std::vector<std::pair<real,std::string>>& weights) const {
   std::vector<int32_t> words, labels;
   dict_->getLine(in, words, labels, model_->rng);
@@ -232,17 +232,17 @@ void FastText::predictWeights(std::istream& in,
   Vector hidden(args_->dim);
   Vector output(dict_->nlabels());
   std::vector<std::pair<real,int32_t>> modelWeightsPredictions;
-  model_->predictWeights(words, modelWeightsPredictions, hidden, output);
+  model_->predictWeights(words, k, modelWeightsPredictions, hidden, output);
+  weights.clear();
   for (auto it = modelWeightsPredictions.cbegin(); it != modelWeightsPredictions.cend(); it++) {
     weights.push_back(std::make_pair(it->first, dict_->getLabel(it->second)));
   }
-  modelWeightsPredictions.clear();
 }
 
-void FastText::predictWeights(std::istream& in) {
+void FastText::predictWeights(std::istream& in, int32_t k) {
   std::vector<std::pair<real,std::string>> weights;
   while (in.peek() != EOF) {
-    predictWeights(in, weights);
+    predictWeights(in, k, weights);
     if (weights.empty()) {
       std::cout << "n/a" << std::endl ;
       continue;
@@ -251,7 +251,8 @@ void FastText::predictWeights(std::istream& in) {
       if (it != weights.cbegin()) {
         std::cout << " ";
       }
-      std::cout << it->second << " " << it->first;
+      std::cout << it->second;
+      std::cout << " " << it->first;
     }
     std::cout << std::endl;
   }

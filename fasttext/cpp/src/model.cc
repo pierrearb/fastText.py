@@ -145,24 +145,36 @@ void Model::computeClassWeights(Vector& hidden, Vector& output) const {
   output.mul(*wo_, hidden);
 }
 
-void Model::predictWeights(const std::vector<int32_t>& input,
+void Model::predictWeights(const std::vector<int32_t>& input, int32_t k,
                            std::vector<std::pair<real, int32_t>>& heapweights,
                            Vector& hidden, Vector& output) const {
-  heapweights.reserve(osz_);
+  assert(k > 0);
+  heapweights.reserve(k + 1);
   computeHidden(input, hidden);
-  computeClassWeights(hidden, output);
-  for (int32_t i = 0; i < osz_; i++) {
-    heapweights.push_back(std::make_pair(output[i], i));
-    std::push_heap(heapweights.begin(), heapweights.end(), comparePairs);
-  }
+  findKBestWeights(k, heapweights, hidden, output);
   std::sort_heap(heapweights.begin(), heapweights.end(), comparePairs);
 }
 
-void Model::predictWeights(const std::vector<int32_t>& input,
+void Model::predictWeights(const std::vector<int32_t>& input, int32_t k,
                            std::vector<std::pair<real, int32_t>>& heapweights) {
-  predictWeights(input, heapweights, hidden_, output_);
+  predictWeights(input, k, heapweights, hidden_, output_);
 }
 
+void Model::findKBestWeights(int32_t k, std::vector<std::pair<real, int32_t>>& heapweights,
+                             Vector& hidden, Vector& output) const {
+  computeClassWeights(hidden, output);
+  for (int32_t i = 0; i < osz_; i++) {
+    if (heapweights.size() == k && output[i] < heapweights.front().first) {
+      continue;
+    }
+    heapweights.push_back(std::make_pair(output[i], i));
+    std::push_heap(heapweights.begin(), heapweights.end(), comparePairs);
+    if (heapweights.size() > k) {
+      std::pop_heap(heapweights.begin(), heapweights.end(), comparePairs);
+      heapweights.pop_back();
+    }
+  }
+}
 
 void Model::findKBest(int32_t k, std::vector<std::pair<real, int32_t>>& heap,
                       Vector& hidden, Vector& output) const {
