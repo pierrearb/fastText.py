@@ -45,8 +45,8 @@ fasttext/cpp/fasttext:
 # Redirect stdout to /dev/null to prevent exceed the log limit size from
 # Travis CI
 test/skipgram_params_test.bin:
-	./fasttext/cpp/fasttext skipgram -input test/params_test.txt -output \
-		test/skipgram_params_test -lr 0.025 -dim 100 -ws 5 -epoch 1 \
+	./fasttext/cpp/fasttext skipgram -input test/data/params_test.txt -output \
+		test/results/skipgram_params_test -lr 0.025 -dim 100 -ws 5 -epoch 1 \
 		-minCount 1 -neg 5 -loss ns -bucket 2000000 -minn 3 -maxn 6 \
 		-thread 4 -lrUpdateRate 100 -t 1e-4 >> /dev/null
 
@@ -54,16 +54,16 @@ test/skipgram_params_test.bin:
 test/skipgram_default_params_result.txt:
 	$(MAKE) skipgram_default_params_result.txt --directory test/
 
-test-skipgram: pre-test fasttext/cpp/fasttext test/skipgram_params_test.bin \
-			   test/skipgram_default_params_result.txt
+test-skipgram: pre-test fasttext/cpp/fasttext test/results/skipgram_params_test.bin \
+			   test/results/skipgram_default_params_result.txt
 	python test/skipgram_test.py --verbose
 
 # Test for cbow model
 # Redirect stdout to /dev/null to prevent exceed the log limit size from
 # Travis CI
 test/cbow_params_test.bin:
-	./fasttext/cpp/fasttext cbow -input test/params_test.txt -output \
-		test/cbow_params_test -lr 0.005 -dim 50 -ws 5 -epoch 1 \
+	./fasttext/cpp/fasttext cbow -input test/data/params_test.txt -output \
+		test/results/cbow_params_test -lr 0.005 -dim 50 -ws 5 -epoch 1 \
 		-minCount 1 -neg 5 -loss ns -bucket 2000000 -minn 3 -maxn 6 \
 		-thread 4 -lrUpdateRate 100 -t 1e-4 >> /dev/null
 
@@ -83,42 +83,42 @@ test/dbpedia.train: test/download_dbpedia.sh
 # Travis CI
 test/classifier.bin: test/dbpedia.train
 	./fasttext/cpp/fasttext supervised -input test/dbpedia.train \
-		-output test/classifier -dim 100 -lr 0.1 -wordNgrams 2 \
+		-output test/results/classifier -dim 100 -lr 0.1 -wordNgrams 2 \
 		-minCount 1 -bucket 2000000 -epoch 5 -thread 4 -saveSoftmax 1 >> /dev/null
 
 test/classifier_test_result.txt: test/classifier.bin
-	./fasttext/cpp/fasttext test test/classifier.bin \
-		test/classifier_test.txt > test/classifier_test_result.txt
+	./fasttext/cpp/fasttext test test/results/classifier.bin \
+		test/data/classifier_test.txt > test/results/classifier_test_result.txt
 
 test/classifier_pred_result.txt: test/classifier.bin
-	./fasttext/cpp/fasttext predict test/classifier.bin \
-		test/classifier_pred_test.txt > \
-		test/classifier_pred_result.txt
+	./fasttext/cpp/fasttext predict test/results/classifier.bin \
+		test/data/classifier_pred_test.txt > \
+		test/results/classifier_pred_result.txt
 
 test/classifier_pred_k_result.txt: test/classifier.bin
-	./fasttext/cpp/fasttext predict test/classifier.bin \
-		test/classifier_pred_test.txt 5 > \
-		test/classifier_pred_k_result.txt
+	./fasttext/cpp/fasttext predict test/results/classifier.bin \
+		test/data/classifier_pred_test.txt 5 > \
+		test/results/classifier_pred_k_result.txt
 
-test/classifier_pred_prob_result.txt: test/classifier.bin
-	./fasttext/cpp/fasttext predict-prob test/classifier.bin \
-		test/classifier_pred_test.txt > \
-		test/classifier_pred_prob_result.txt
+test/classifier_pred_prob_result.txt: test/results/classifier.bin
+	./fasttext/cpp/fasttext predict-prob test/results/classifier.bin \
+		test/data/classifier_pred_test.txt > \
+		test/results/classifier_pred_prob_result.txt
 
 test/classifier_pred_prob_k_result.txt: test/classifier.bin
-	./fasttext/cpp/fasttext predict-prob test/classifier.bin \
-		test/classifier_pred_test.txt 5 > \
-		test/classifier_pred_prob_k_result.txt
+	./fasttext/cpp/fasttext predict-prob test/results/classifier.bin \
+		test/data/classifier_pred_test.txt 5 > \
+		test/results/classifier_pred_prob_k_result.txt
 
 test/classifier_pred_weights_result.txt: test/classifier.bin
-	./fasttext/cpp/fasttext predict-weights test/classifier.bin \
-		test/classifier_pred_test.txt > \
-		test/classifier_pred_weights_result.txt
+	./fasttext/cpp/fasttext predict-weights test/results/classifier.bin \
+		test/data/classifier_pred_test.txt > \
+		test/results/classifier_pred_weights_result.txt
 
 test/classifier_pred_weights_k_result.txt: test/classifier.bin
-	./fasttext/cpp/fasttext predict-weights test/classifier.bin \
-		test/classifier_pred_test.txt 5 > \
-		test/classifier_pred_weights_k_result.txt
+	./fasttext/cpp/fasttext predict-weights test/results/classifier.bin \
+		test/data/classifier_pred_test.txt 5 > \
+		test/results/classifier_pred_weights_k_result.txt
 
 # Generate default value of classifier command from fasttext(1)
 test/classifier_default_params_result.txt:

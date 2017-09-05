@@ -12,10 +12,12 @@ import fasttext as ft
 import default_params
 
 test_dir = path.dirname(__file__)
-skipgram_file = path.join(test_dir, 'skipgram_params_test.bin')
-input_file = path.join(test_dir, 'params_test.txt')
-output = path.join(test_dir, 'generated_skipgram')
-params_txt = path.join(test_dir, 'skipgram_default_params_result.txt')
+result_dir = path.join(test_dir, 'results')
+data_dir = path.join(test_dir, 'data')
+skipgram_file = path.join(result_dir, 'skipgram_params_test.bin')
+input_file = path.join(data_dir, 'params_test.txt')
+output = path.join(result_dir, 'generated_skipgram')
+params_txt = path.join(result_dir, 'skipgram_default_params_result.txt')
 
 # Test to make sure that skipgram interface run correctly
 class TestSkipgramModel(unittest.TestCase):
