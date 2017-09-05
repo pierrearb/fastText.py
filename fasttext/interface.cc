@@ -251,6 +251,53 @@ std::vector<std::vector<std::string>>
     return results;
 }
 
+std::vector<std::vector<std::string>>
+    FastTextModel::classifierPredictWeights(std::string text, int32_t k)
+{
+    /* Hardcoded here; since we need this variable but the variable
+     * is private in dictionary.h */
+    const int32_t max_line_size = 1024;
+
+    /* List of word ids */
+    std::vector<int32_t> text_word_ids;
+    std::istringstream iss(text);
+    std::string token;
+
+    /* We implement the same logic as Dictionary::getLine */
+    std::uniform_real_distribution<> uniform(0, 1);
+    while(_dict->readWord(iss, token)) {
+        int32_t word_id = _dict->getId(token);
+        if(word_id < 0) continue;
+        entry_type type = _dict->getType(word_id);
+        if (type == entry_type::word &&
+                !_dict->discard(word_id, uniform(_model->rng))) {
+            text_word_ids.push_back(word_id);
+        }
+        if(text_word_ids.size() > max_line_size) break;
+    }
+    _dict->addNgrams(text_word_ids, wordNgrams);
+
+    std::vector<std::vector<std::string>> results;
+    if(text_word_ids.size() > 0) {
+        std::vector<std::pair<real, int32_t>> predictedweights;
+
+        _model->predictWeights(text_word_ids, k, predictedweights);
+        for(auto it = predictedweights.cbegin(); it != predictedweights.cend(); it++) {
+            std::vector<std::string> result;
+            result.push_back(_dict->getLabel(it->second));
+
+            /* We use string stream here instead of to_string, to make sure
+             * that the string is consistent with std::cout from fasttext(1) */
+            std::ostringstream predictedweights_stream;
+            predictedweights_stream << it->first;
+            result.push_back(predictedweights_stream.str());
+
+            results.push_back(result);
+        }
+    }
+    return results;
+}
+
 template <class cT, class traits = std::char_traits<cT> >
 class basic_nullbuf: public std::basic_streambuf<cT, traits> {
     typename traits::int_type overflow(typename traits::int_type c)

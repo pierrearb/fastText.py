@@ -110,6 +110,16 @@ test/classifier_pred_prob_k_result.txt: test/classifier.bin
 		test/classifier_pred_test.txt 5 > \
 		test/classifier_pred_prob_k_result.txt
 
+test/classifier_pred_weights_result.txt: test/classifier.bin
+	./fasttext/cpp/fasttext predict-weights test/classifier.bin \
+		test/classifier_pred_test.txt > \
+		test/classifier_pred_weights_result.txt
+
+test/classifier_pred_weights_k_result.txt: test/classifier.bin
+	./fasttext/cpp/fasttext predict-weights test/classifier.bin \
+		test/classifier_pred_test.txt 5 > \
+		test/classifier_pred_weights_k_result.txt
+
 # Generate default value of classifier command from fasttext(1)
 test/classifier_default_params_result.txt:
 	$(MAKE) classifier_default_params_result.txt --directory test/
@@ -120,6 +130,8 @@ test-classifier: pre-test fasttext/cpp/fasttext test/classifier.bin \
 				 test/classifier_pred_k_result.txt \
 				 test/classifier_pred_prob_result.txt \
 				 test/classifier_pred_prob_k_result.txt \
+				 test/classifier_pred_weights_result.txt \
+				 test/classifier_pred_weights_k_result.txt \
 				 test/classifier_default_params_result.txt
 	python test/classifier_test.py --verbose
 

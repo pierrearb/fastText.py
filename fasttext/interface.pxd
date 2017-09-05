@@ -44,6 +44,7 @@ cdef extern from "interface.h":
         vector[double] classifierTest(string filename, int32_t k)
         vector[string] classifierPredict(string text, int32_t k)
         vector[vector[string]] classifierPredictProb(string text, int32_t k)
+        vector[vector[string]] classifierPredictWeights(string text, int32_t k)
 
         # Wrapper for Dictionary class
         int32_t dictGetNWords()

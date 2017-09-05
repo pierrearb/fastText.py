@@ -45,6 +45,8 @@ class FastTextModel {
         std::vector<std::string> classifierPredict(std::string text, int32_t k);
         std::vector<std::vector<std::string>> classifierPredictProb(std::string text,
                 int32_t k);
+        std::vector<std::vector<std::string>> classifierPredictWeights(std::string text,
+                int32_t k);
 
         void addWord(std::string word);
         void setArgs(std::shared_ptr<Args> args);

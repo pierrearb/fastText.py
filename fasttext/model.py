@@ -81,6 +81,16 @@ class SupervisedModel(object):
             results.append(result)
         return results
 
+    def predict_weights(self, texts, k=1):
+        results = []
+        for text in texts:
+            if text[-1] != '\n':
+                text += '\n'
+            result = self._model.classifier_predict_weights(text, k,
+                    self.label_prefix, self.encoding)
+            results.append(result)
+        return results
+
 # Class for test result
 class ClassifierTestResult(object):
     def __init__(self, precision, recall, nexamples):

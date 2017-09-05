@@ -81,6 +81,23 @@ cdef class FastTextModelWrapper:
             probabilities.append(prob)
         return list(zip(labels, probabilities))
 
+    def classifier_predict_weights(self, text, k, label_prefix, encoding):
+        cdef vector[vector[string]] raw_results
+        cdef string cpp_str
+        text_bytes = bytes(text, encoding)
+        labels = []
+        weights = []
+        raw_results = self.fm.classifierPredictWeights(text_bytes, k)
+        for result in raw_results:
+            cpp_str = result[0]
+            label = cpp_str.decode(encoding)
+            label = label.replace(label_prefix, '')
+            cpp_str = result[1]
+            weight = float(cpp_str)
+            labels.append(label)
+            weights.append(weight)
+        return list(zip(labels, weights))
+
     @property
     def dim(self):
         return self.fm.dim
