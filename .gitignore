@@ -11,6 +11,7 @@ build/
 data/
 result/
 dist/
+env/
 
 fasttext/fasttext.cpp
 facebookresearch-fasttext-*
