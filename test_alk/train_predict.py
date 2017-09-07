@@ -15,7 +15,7 @@ params = {
     'min_count': 1,
     'neg': 5,
     'word_ngrams': 2,
-    'loss': 'hs',
+    'loss': 'softmax',
     'bucket': 2000000,
     'minn': 0,
     'maxn': 0,

@@ -44,7 +44,6 @@ void printPredictUsage() {
     << "  <model>      model filename\n"
     << "  <test-data>  test data filename (if -, read from stdin)\n"
     << "  <k>          (optional; 1 by default) predict top k labels\n"
-    << "  <k>          (optional; 1 by default) predict top k labels\n"
     << std::endl;
 }
 

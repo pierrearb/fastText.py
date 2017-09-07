@@ -151,7 +151,11 @@ void Model::predictWeights(const std::vector<int32_t>& input, int32_t k,
   assert(k > 0);
   heapweights.reserve(k + 1);
   computeHidden(input, hidden);
-  findKBestWeights(k, heapweights, hidden, output);
+  if (args_->loss == loss_name::hs) {
+    throw std::invalid_argument("loss must be softmax or ns to predict class weights");
+  } else {
+    findKBestWeights(k, heapweights, hidden, output);
+  }
   std::sort_heap(heapweights.begin(), heapweights.end(), comparePairs);
 }
 
