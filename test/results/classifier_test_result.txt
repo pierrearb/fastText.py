@@ -1,3 +1,0 @@
-P@1: 0.99
-R@1: 0.99
-Number of examples: 100
