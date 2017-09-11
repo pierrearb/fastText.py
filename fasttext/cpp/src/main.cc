@@ -47,9 +47,9 @@ void printPredictUsage() {
     << std::endl;
 }
 
-void printPredictWeightsUsage() {
+void printPredictRawUsage() {
   std::cout
-    << "usage: fasttext predict-weights <model> <test-data>\n\n"
+    << "usage: fasttext predict-raw <model> <test-data>\n\n"
     << "  <model>      model filename\n"
     << "  <test-data>  test data filename (if -, read from stdin)\n"
     << std::endl;
@@ -119,14 +119,14 @@ void predict(int argc, char** argv) {
   exit(0);
 }
 
-void predictWeights(int argc, char** argv) {
+void predictRaw(int argc, char** argv) {
   int32_t k;
   if (argc == 4) {
     k = 1;
   } else if (argc == 5) {
     k = atoi(argv[4]);
   } else {
-    printPredictWeightsUsage();
+    printPredictRawUsage();
     exit(EXIT_FAILURE);
   }
   FastText fasttext;
@@ -134,14 +134,14 @@ void predictWeights(int argc, char** argv) {
 
   std::string infile(argv[3]);
   if (infile == "-") {
-    fasttext.predictWeights(std::cin, k);
+    fasttext.predictRaw(std::cin, k);
   } else {
     std::ifstream ifs(infile);
     if (!ifs.is_open()) {
       std::cerr << "Input file cannot be opened!" << std::endl;
       exit(EXIT_FAILURE);
     }
-    fasttext.predictWeights(ifs, k);
+    fasttext.predictRaw(ifs, k);
     ifs.close();
   }
 
@@ -180,8 +180,8 @@ int main(int argc, char** argv) {
     printVectors(argc, argv);
   } else if (command == "predict" || command == "predict-prob" ) {
     predict(argc, argv);
-  } else if (command == "predict-weights") {
-    predictWeights(argc, argv);
+  } else if (command == "predict-raw") {
+    predictRaw(argc, argv);
   } else {
     printUsage();
     exit(EXIT_FAILURE);

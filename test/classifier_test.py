@@ -23,8 +23,8 @@ pred_result = path.join(result_dir, 'classifier_pred_result.txt')
 pred_k_result = path.join(result_dir, 'classifier_pred_k_result.txt')
 pred_prob_result = path.join(result_dir, 'classifier_pred_prob_result.txt')
 pred_prob_k_result = path.join(result_dir, 'classifier_pred_prob_k_result.txt')
-pred_weights_result = path.join(result_dir, 'classifier_pred_weights_result.txt')
-pred_weights_k_result = path.join(result_dir, 'classifier_pred_weights_k_result.txt')
+pred_raw_result = path.join(result_dir, 'classifier_pred_raw_result.txt')
+pred_raw_k_result = path.join(result_dir, 'classifier_pred_raw_k_result.txt')
 test_file = path.join(data_dir, 'classifier_test.txt')
 params_txt = path.join(result_dir, 'classifier_default_params_result.txt')
 pretrained_vectors_path = path.join(result_dir, 'generated_skipgram.vec')
@@ -347,39 +347,39 @@ class TestClassifierModel(unittest.TestCase):
         # fasttext(1)
         self.assertTrue(labels == fasttext_labels)
 
-    def test_classifier_predict_weights(self):
+    def test_classifier_predict_raw(self):
         # Load the pre-trained classifier
         label_prefix = '__label__'
         classifier = ft.load_model(classifier_bin, label_prefix=label_prefix)
 
         # Read prediction result from fasttext(1)
-        fasttext_labels = read_labels_from_result_prob(pred_weights_result,
+        fasttext_labels = read_labels_from_result_prob(pred_raw_result,
                 label_prefix=label_prefix)
 
         # Read texts from the pred_file
         texts = read_texts(pred_file)
 
         # Predict the labels
-        labels = classifier.predict_weights(texts)
+        labels = classifier.predict_raw(texts)
 
         # Make sure the returned labels are the same as predicted by
         # fasttext(1)
         self.assertTrue(labels == fasttext_labels)
 
-    def test_classifier_predict_weights_k_best(self):
+    def test_classifier_predict_raw_k_best(self):
         label_prefix = '__label__'
         # Load the pre-trained classifier
         classifier = ft.load_model(classifier_bin, label_prefix=label_prefix)
 
         # Read prediction result from fasttext(1)
-        fasttext_labels = read_labels_from_result_prob(pred_weights_k_result,
+        fasttext_labels = read_labels_from_result_prob(pred_raw_k_result,
                 label_prefix=label_prefix)
 
         # Read texts from the pred_file
         texts = read_texts(pred_file)
 
         # Predict the k-best labels
-        labels = classifier.predict_weights(texts, k=5)
+        labels = classifier.predict_raw(texts, k=5)
 
         # Make sure the returned labels are the same as predicted by
         # fasttext(1)

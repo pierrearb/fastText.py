@@ -1,7 +1,7 @@
 
 all: install test
 
-test: test-skipgram test-cbow test-classifier
+test: test-skipgram test-cbow test-classifier post-test
 
 buildext:
 	python setup.py build_ext --inplace
@@ -34,7 +34,7 @@ install-dev: README.rst
 
 pre-test:
 	# Remove generated file from test
-	rm -f test/*.vec test/*.bin test/*_result.txt
+	rm -f test/*.vec test/*.bin test/*_result.txt test/results/*.vec test/results/*.bin test/results/*_result.txt
 .PHONY: pre-test
 
 fasttext/cpp/fasttext:
@@ -54,8 +54,8 @@ test/skipgram_params_test.bin:
 test/skipgram_default_params_result.txt:
 	$(MAKE) skipgram_default_params_result.txt --directory test/
 
-test-skipgram: pre-test fasttext/cpp/fasttext test/results/skipgram_params_test.bin \
-			   test/results/skipgram_default_params_result.txt
+test-skipgram: pre-test fasttext/cpp/fasttext test/skipgram_params_test.bin \
+			   test/skipgram_default_params_result.txt
 	python test/skipgram_test.py --verbose
 
 # Test for cbow model
@@ -110,15 +110,15 @@ test/classifier_pred_prob_k_result.txt: test/classifier.bin
 		test/data/classifier_pred_test.txt 5 > \
 		test/results/classifier_pred_prob_k_result.txt
 
-test/classifier_pred_weights_result.txt: test/classifier.bin
-	./fasttext/cpp/fasttext predict-weights test/results/classifier.bin \
+test/classifier_pred_raw_result.txt: test/classifier.bin
+	./fasttext/cpp/fasttext predict-raw test/results/classifier.bin \
 		test/data/classifier_pred_test.txt > \
-		test/results/classifier_pred_weights_result.txt
+		test/results/classifier_pred_raw_result.txt
 
-test/classifier_pred_weights_k_result.txt: test/classifier.bin
-	./fasttext/cpp/fasttext predict-weights test/results/classifier.bin \
+test/classifier_pred_raw_k_result.txt: test/classifier.bin
+	./fasttext/cpp/fasttext predict-raw test/results/classifier.bin \
 		test/data/classifier_pred_test.txt 5 > \
-		test/results/classifier_pred_weights_k_result.txt
+		test/results/classifier_pred_raw_k_result.txt
 
 # Generate default value of classifier command from fasttext(1)
 test/classifier_default_params_result.txt:
@@ -130,8 +130,12 @@ test-classifier: pre-test fasttext/cpp/fasttext test/classifier.bin \
 				 test/classifier_pred_k_result.txt \
 				 test/classifier_pred_prob_result.txt \
 				 test/classifier_pred_prob_k_result.txt \
-				 test/classifier_pred_weights_result.txt \
-				 test/classifier_pred_weights_k_result.txt \
+				 test/classifier_pred_raw_result.txt \
+				 test/classifier_pred_raw_k_result.txt \
 				 test/classifier_default_params_result.txt
 	python test/classifier_test.py --verbose
 
+post-test:
+	# Remove generated file from test
+	rm -f test/*.vec test/*.bin test/*_result.txt rm -f test/results/*.vec test/results/*.bin test/results/*_result.txt
+.PHONY: pre-test

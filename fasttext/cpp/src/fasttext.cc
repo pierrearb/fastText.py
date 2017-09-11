@@ -223,32 +223,32 @@ void FastText::predict(std::istream& in, int32_t k, bool print_prob) {
   }
 }
 
-void FastText::predictWeights(std::istream& in, int32_t k,
-                              std::vector<std::pair<real,std::string>>& weights) const {
+void FastText::predictRaw(std::istream& in, int32_t k,
+                              std::vector<std::pair<real,std::string>>& rawpredictions) const {
   std::vector<int32_t> words, labels;
   dict_->getLine(in, words, labels, model_->rng);
   dict_->addNgrams(words, args_->wordNgrams);
   if (words.empty()) return;
   Vector hidden(args_->dim);
   Vector output(dict_->nlabels());
-  std::vector<std::pair<real,int32_t>> modelWeightsPredictions;
-  model_->predictWeights(words, k, modelWeightsPredictions, hidden, output);
-  weights.clear();
-  for (auto it = modelWeightsPredictions.cbegin(); it != modelWeightsPredictions.cend(); it++) {
-    weights.push_back(std::make_pair(it->first, dict_->getLabel(it->second)));
+  std::vector<std::pair<real,int32_t>> modelRawPredictions;
+  model_->predictRaw(words, k, modelRawPredictions, hidden, output);
+  rawpredictions.clear();
+  for (auto it = modelRawPredictions.cbegin(); it != modelRawPredictions.cend(); it++) {
+    rawpredictions.push_back(std::make_pair(it->first, dict_->getLabel(it->second)));
   }
 }
 
-void FastText::predictWeights(std::istream& in, int32_t k) {
-  std::vector<std::pair<real,std::string>> weights;
+void FastText::predictRaw(std::istream& in, int32_t k) {
+  std::vector<std::pair<real,std::string>> rawpredictions;
   while (in.peek() != EOF) {
-    predictWeights(in, k, weights);
-    if (weights.empty()) {
+    predictRaw(in, k, rawpredictions);
+    if (rawpredictions.empty()) {
       std::cout << "n/a" << std::endl ;
       continue;
     }
-    for (auto it = weights.cbegin(); it != weights.cend(); it++) {
-      if (it != weights.cbegin()) {
+    for (auto it = rawpredictions.cbegin(); it != rawpredictions.cend(); it++) {
+      if (it != rawpredictions.cbegin()) {
         std::cout << " ";
       }
       std::cout << it->second;

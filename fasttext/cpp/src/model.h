@@ -86,18 +86,18 @@ class Model {
              Vector&) const;
     void findKBest(int32_t, std::vector<std::pair<real, int32_t>>&,
                    Vector&, Vector&) const;
-    void findKBestWeights(int32_t, std::vector<std::pair<real, int32_t>>&,
+    void findKBestScores(int32_t, std::vector<std::pair<real, int32_t>>&,
                    Vector&, Vector&) const;
     void update(const std::vector<int32_t>&, int32_t, real);
     void computeHidden(const std::vector<int32_t>&, Vector&) const;
     void computeOutputSoftmax(Vector&, Vector&) const;
     void computeOutputSoftmax();
-    void predictWeights(const std::vector<int32_t>&, int32_t,
+    void predictRaw(const std::vector<int32_t>&, int32_t,
                         std::vector<std::pair<real, int32_t>>&,
                         Vector&, Vector&) const;
-    void predictWeights(const std::vector<int32_t>&, int32_t,
+    void predictRaw(const std::vector<int32_t>&, int32_t,
                         std::vector<std::pair<real, int32_t>>&);
-    void computeClassWeights(Vector&, Vector&) const;
+    void computeClassScore(Vector&, Vector&) const;
 
     void setTargetCounts(const std::vector<int64_t>&);
     void initTableNegatives(const std::vector<int64_t>&);

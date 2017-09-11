@@ -141,41 +141,48 @@ void Model::predict(const std::vector<int32_t>& input, int32_t k,
   predict(input, k, heap, hidden_, output_);
 }
 
-void Model::computeClassWeights(Vector& hidden, Vector& output) const {
+void Model::computeClassScore(Vector& hidden, Vector& output) const {
   output.mul(*wo_, hidden);
+  real max = output[0];
+  for (int32_t i = 0; i < osz_; i++) {
+    max = std::max(output[i], max);
+  }
+  for (int32_t i = 0; i < osz_; i++) {
+    output[i] = exp(output[i] - max);
+  }
 }
 
-void Model::predictWeights(const std::vector<int32_t>& input, int32_t k,
-                           std::vector<std::pair<real, int32_t>>& heapweights,
+void Model::predictRaw(const std::vector<int32_t>& input, int32_t k,
+                           std::vector<std::pair<real, int32_t>>& heapscores,
                            Vector& hidden, Vector& output) const {
   assert(k > 0);
-  heapweights.reserve(k + 1);
+  heapscores.reserve(k + 1);
   computeHidden(input, hidden);
   if (args_->loss == loss_name::hs) {
-    throw std::invalid_argument("loss must be softmax or ns to predict class weights");
+    throw std::invalid_argument("loss must be softmax or ns to predict class raw predictions");
   } else {
-    findKBestWeights(k, heapweights, hidden, output);
+    findKBestScores(k, heapscores, hidden, output);
   }
-  std::sort_heap(heapweights.begin(), heapweights.end(), comparePairs);
+  std::sort_heap(heapscores.begin(), heapscores.end(), comparePairs);
 }
 
-void Model::predictWeights(const std::vector<int32_t>& input, int32_t k,
-                           std::vector<std::pair<real, int32_t>>& heapweights) {
-  predictWeights(input, k, heapweights, hidden_, output_);
+void Model::predictRaw(const std::vector<int32_t>& input, int32_t k,
+                           std::vector<std::pair<real, int32_t>>& heapscores) {
+  predictRaw(input, k, heapscores, hidden_, output_);
 }
 
-void Model::findKBestWeights(int32_t k, std::vector<std::pair<real, int32_t>>& heapweights,
+void Model::findKBestScores(int32_t k, std::vector<std::pair<real, int32_t>>& heapscores,
                              Vector& hidden, Vector& output) const {
-  computeClassWeights(hidden, output);
+  computeClassScore(hidden, output);
   for (int32_t i = 0; i < osz_; i++) {
-    if (heapweights.size() == k && output[i] < heapweights.front().first) {
+    if (heapscores.size() == k && output[i] < heapscores.front().first) {
       continue;
     }
-    heapweights.push_back(std::make_pair(output[i], i));
-    std::push_heap(heapweights.begin(), heapweights.end(), comparePairs);
-    if (heapweights.size() > k) {
-      std::pop_heap(heapweights.begin(), heapweights.end(), comparePairs);
-      heapweights.pop_back();
+    heapscores.push_back(std::make_pair(output[i], i));
+    std::push_heap(heapscores.begin(), heapscores.end(), comparePairs);
+    if (heapscores.size() > k) {
+      std::pop_heap(heapscores.begin(), heapscores.end(), comparePairs);
+      heapscores.pop_back();
     }
   }
 }
@@ -337,12 +344,12 @@ void Model::initLog() {
   }
 }
 
+// https://github.com/facebookresearch/fastText/issues/131
 real Model::log(real x) const {
   if (x > 1.0) {
     return 0.0;
   }
-  int i = int(x * LOG_TABLE_SIZE);
-  return t_log[i];
+  return std::log(x + 1e-6);
 }
 
 real Model::sigmoid(real x) const {
@@ -351,9 +358,26 @@ real Model::sigmoid(real x) const {
   } else if (x > MAX_SIGMOID) {
     return 1.0;
   } else {
-    int i = int((x + MAX_SIGMOID) * SIGMOID_TABLE_SIZE / MAX_SIGMOID / 2);
-    return t_sigmoid[i];
+    return 1.0 / (1.0 + std::exp(-x));
   }
 }
+// real Model::log(real x) const {
+//   if (x > 1.0) {
+//     return 0.0;
+//   }
+//   int i = int(x * LOG_TABLE_SIZE);
+//   return t_log[i];
+// }
+
+// real Model::sigmoid(real x) const {
+//   if (x < -MAX_SIGMOID) {
+//     return 0.0;
+//   } else if (x > MAX_SIGMOID) {
+//     return 1.0;
+//   } else {
+//     int i = int((x + MAX_SIGMOID) * SIGMOID_TABLE_SIZE / MAX_SIGMOID / 2);
+//     return t_sigmoid[i];
+//   }
+// }
 
 }

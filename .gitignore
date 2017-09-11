@@ -24,10 +24,11 @@ facebookresearch-fasttext-*
 
 # For test
 test/*_result.txt
-test/result/*
+test/results/*
 test/dbpedia.train
 test/dbpedia_csv/
 test/default_params_test
+test_alk/
 
 # Misc
 TODO

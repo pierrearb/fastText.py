@@ -252,7 +252,7 @@ std::vector<std::vector<std::string>>
 }
 
 std::vector<std::vector<std::string>>
-    FastTextModel::classifierPredictWeights(std::string text, int32_t k)
+    FastTextModel::classifierPredictRaw(std::string text, int32_t k)
 {
     /* Hardcoded here; since we need this variable but the variable
      * is private in dictionary.h */
@@ -279,18 +279,18 @@ std::vector<std::vector<std::string>>
 
     std::vector<std::vector<std::string>> results;
     if(text_word_ids.size() > 0) {
-        std::vector<std::pair<real, int32_t>> predictedweights;
+        std::vector<std::pair<real, int32_t>> predictedscores;
 
-        _model->predictWeights(text_word_ids, k, predictedweights);
-        for(auto it = predictedweights.cbegin(); it != predictedweights.cend(); it++) {
+        _model->predictRaw(text_word_ids, k, predictedscores);
+        for(auto it = predictedscores.cbegin(); it != predictedscores.cend(); it++) {
             std::vector<std::string> result;
             result.push_back(_dict->getLabel(it->second));
 
             /* We use string stream here instead of to_string, to make sure
              * that the string is consistent with std::cout from fasttext(1) */
-            std::ostringstream predictedweights_stream;
-            predictedweights_stream << it->first;
-            result.push_back(predictedweights_stream.str());
+            std::ostringstream predictedscores_stream;
+            predictedscores_stream << it->first;
+            result.push_back(predictedscores_stream.str());
 
             results.push_back(result);
         }
